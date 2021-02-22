@@ -110,27 +110,33 @@ class Matrix extends Model
         return $result;
     }
     
+    /**
+     * Convert a number from decimal notation to alphabet notation.
+     */
     private static function intToChar(int $val) : string
     {
         if ($val === 0) return '0';
         
         $absVal = abs($val);
-        $base = ord('Z') - ord('A') + 1;
+        $base = ord('Z') - ord('A') + 1; // base 26
         $result = '';
         
-        while ($absVal > $base) {
-            $digit = $absVal % $base;
-            $result = chr(ord('A') + $digit - 1) . $result;
-            $absVal = ($absVal - $digit) / $base;
+        while ($absVal > 0) {
+            $digit = ($absVal - 1) % $base;
+            $result = chr(ord('A') + $digit) . $result;
+            $absVal = intdiv($absVal - $digit - 1, $base);
         }
         
-        if ($absVal > 0) {
-            $result = chr(ord('A') + $absVal - 1) . $result;
+        if ($val < 0) {
+            $result = '-' . $result;
         }
         
         return $result;
     }
     
+    /**
+     * Convert cell values from decimal notation to alphabet notation.
+     */
     public function translateToChars()
     {
         foreach ($this->cells as &$row) {

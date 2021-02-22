@@ -17,8 +17,8 @@ class ApiController extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     
     public function multiplyMatrices(Request $request) {
-        $matrix1 = Matrix::random(2, 3, 0);
-        $matrix2 = Matrix::random(3, 4, 0);
+        $matrix1 = Matrix::random(12, 13, -5);
+        $matrix2 = Matrix::random(13, 14, -5);
         
         try {
             $matrixMultiplied = $matrix1->multiply($matrix2);
