@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/multiply-matrices', 'App\Http\Controllers\ApiController@multiplyMatrices');
+Route::post('/multiply-matrices', 'App\Http\Controllers\ApiController@multiplyMatrices');

@@ -30,9 +30,52 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
  */
 
 
-var app = new Vue({
-  el: '#app'
+var vApp = new Vue({
+  el: '#app',
+  data: {
+    matrix1: {
+      rows: 10,
+      cols: 10,
+      cells: []
+    },
+    matrix2: {
+      rows: 10,
+      cols: 10,
+      cells: []
+    }
+  },
+  methods: {
+    createMatrix: function createMatrix(event, matrix) {
+      refreshMatrix(matrix);
+    },
+    multiplyMatrices: function multiplyMatrices(event) {
+      axios.post('api/multiply-matrices').then(function (response) {
+        // handle success
+        console.log(response.data);
+      });
+    }
+  },
+  created: function created() {
+    refreshMatrix(this.matrix1);
+    refreshMatrix(this.matrix2);
+  }
 });
+
+function refreshMatrix(matrix) {
+  matrix.cells = [];
+
+  for (var rIdx = 0; rIdx < matrix.rows; rIdx++) {
+    var row = new Array(matrix.cols);
+
+    for (var cIdx = 0; cIdx < matrix.cols; cIdx++) {
+      row[cIdx] = Math.floor(Math.random() * Math.floor(matrix.rows + matrix.cols));
+    }
+
+    matrix.cells.push(row);
+  }
+}
+
+window.vApp = vApp;
 
 /***/ }),
 
@@ -62,7 +105,7 @@ try {//window.Popper = require('popper.js').default;
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js").default;
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js").default;
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

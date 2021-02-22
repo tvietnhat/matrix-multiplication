@@ -10944,4 +10944,12 @@ a.text-dark:focus {
   }
 }
 
+table.matrix {
+  background-color: #fff;
+}
+
+table.matrix td {
+  padding: 8px;
+}
+
 

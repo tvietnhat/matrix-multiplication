@@ -25,6 +25,39 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
+const vApp = new Vue({
     el: '#app',
+    data: {
+        matrix1: { rows: 10, cols: 10, cells: [] },
+        matrix2: { rows: 10, cols: 10, cells: [] },
+    },
+    methods: {
+        createMatrix: function (event, matrix) {
+            refreshMatrix(matrix);
+        },
+        multiplyMatrices(event) {
+            axios.post('api/multiply-matrices')
+            .then(function (response) {
+              // handle success
+              console.log(response.data);
+            });
+        }
+    },
+    created: function () {
+        refreshMatrix(this.matrix1);
+        refreshMatrix(this.matrix2);
+    }
 });
+
+function refreshMatrix(matrix) {
+    matrix.cells = [];
+    for (var rIdx = 0; rIdx < matrix.rows; rIdx++) {
+        var row = new Array(matrix.cols); 
+        for (var cIdx = 0; cIdx < matrix.cols; cIdx++) {
+            row[cIdx] = Math.floor(Math.random() * Math.floor(matrix.rows + matrix.cols));
+        }
+        matrix.cells.push(row);
+    }
+}
+
+window.vApp = vApp;
