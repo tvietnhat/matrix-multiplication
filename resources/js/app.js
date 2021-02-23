@@ -28,36 +28,65 @@ require('./bootstrap');
 const vApp = new Vue({
     el: '#app',
     data: {
-        matrix1: { rows: 10, cols: 10, cells: [] },
-        matrix2: { rows: 10, cols: 10, cells: [] },
+        matrix1: { rows: 7, cols: 10, cells: [], isEditing: false },
+        matrix2: { rows: 10, cols: 8, cells: [], isEditing: false },
+        result: null,
+        resultInChars: null,
+        errors: [],
+        isMultiplying: false,
     },
     methods: {
+        refreshMatrix: function (matrix) {
+            matrix.cells = [];
+            for (var rIdx = 0; rIdx < matrix.rows; rIdx++) {
+                var row = new Array(matrix.cols); 
+                for (var cIdx = 0; cIdx < matrix.cols; cIdx++) {
+                    row[cIdx] = Math.floor(Math.random() * Math.floor(matrix.rows + matrix.cols));
+                }
+                matrix.cells.push(row);
+            }
+        },
         createMatrix: function (event, matrix) {
-            refreshMatrix(matrix);
+            this.refreshMatrix(matrix);
         },
         multiplyMatrices(event) {
-            axios.post('api/multiply-matrices')
+            // setting up
+            this.errors = null;
+            this.result = null;
+            this.resultInChars = null;
+            this.isMultiplying = true;
+            var thisApp = this;
+            
+            // request for calculation from api
+            axios.post('api/multiply-matrices', {
+                matrix1: this.matrix1.cells,
+                matrix2: this.matrix2.cells,
+            })
             .then(function (response) {
               // handle success
               console.log(response.data);
+              if (response.data.success) {
+                  thisApp.result = response.data.result;
+                  thisApp.resultInChars = response.data.resultInChars;
+              } else if (response.data.error) {
+                  thisApp.errors = [ response.data.error ];
+              }
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+                // pretend delay
+                setTimeout(function(){ thisApp.isMultiplying = false; }, 1000);
             });
         }
     },
     created: function () {
-        refreshMatrix(this.matrix1);
-        refreshMatrix(this.matrix2);
+        this.refreshMatrix(this.matrix1);
+        this.refreshMatrix(this.matrix2);
     }
 });
 
-function refreshMatrix(matrix) {
-    matrix.cells = [];
-    for (var rIdx = 0; rIdx < matrix.rows; rIdx++) {
-        var row = new Array(matrix.cols); 
-        for (var cIdx = 0; cIdx < matrix.cols; cIdx++) {
-            row[cIdx] = Math.floor(Math.random() * Math.floor(matrix.rows + matrix.cols));
-        }
-        matrix.cells.push(row);
-    }
-}
 
 window.vApp = vApp;

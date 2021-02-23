@@ -10944,7 +10944,28 @@ a.text-dark:focus {
   }
 }
 
+#app {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+h1,
+h3 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+form {
+  margin-bottom: 2rem;
+}
+
+.matrix-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 table.matrix {
+  margin: 0 auto 2rem auto;
   background-color: #fff;
 }
 
