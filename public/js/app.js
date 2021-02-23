@@ -37,12 +37,14 @@ var vApp = new Vue({
       rows: 7,
       cols: 10,
       cells: [],
+      cellErrors: {},
       isEditing: false
     },
     matrix2: {
       rows: 10,
       cols: 8,
       cells: [],
+      cellErrors: {},
       isEditing: false
     },
     result: null,
@@ -63,9 +65,41 @@ var vApp = new Vue({
 
         matrix.cells.push(row);
       }
+
+      matrix.cellErrors = {};
+      console.log(matrix);
     },
     createMatrix: function createMatrix(event, matrix) {
       this.refreshMatrix(matrix);
+    },
+    isMatrixValid: function isMatrixValid(matrix) {
+      for (var rIdx = 0; rIdx < matrix.rows; rIdx++) {
+        for (var cIdx = 0; cIdx < matrix.cols; cIdx++) {
+          var err = matrix.cellErrors['r' + rIdx + 'c' + cIdx];
+          if (err != undefined && err != null) return false;
+        }
+      }
+
+      return true;
+    },
+    toggleEditing: function toggleEditing(matrix) {
+      if (matrix.isEditing) {
+        if (this.isMatrixValid(matrix)) {
+          matrix.isEditing = false;
+        }
+      } else {
+        matrix.isEditing = true;
+      }
+    },
+    cellValueChange: function cellValueChange(matrix, rIdx, cIdx) {
+      var val = parseInt(matrix.cells[rIdx][cIdx]);
+      console.log(rIdx, cIdx, val);
+
+      if (isNaN(val)) {
+        matrix.cellErrors['r' + rIdx + 'c' + cIdx] = 'Invalid Value';
+      } else {
+        delete matrix.cellErrors['r' + rIdx + 'c' + cIdx];
+      }
     },
     multiplyMatrices: function multiplyMatrices(event) {
       // setting up

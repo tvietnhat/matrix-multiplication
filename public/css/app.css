@@ -10970,7 +10970,21 @@ table.matrix {
 }
 
 table.matrix td {
-  padding: 8px;
+  padding: 0.25rem;
+}
+
+table.matrix td span {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+}
+
+table.matrix .form-control {
+  padding: 0.375rem;
+}
+
+table.matrix .form-control.is-invalid {
+  padding-right: 0.375rem;
+  background-image: none;
 }
 
 

@@ -17,14 +17,9 @@
                 <h1 class="text-center">Matrix Multiplication</h1>
                 
                 <div class="row">
-                    <div class="col-12">
-                        <ul v-if="errors && errors.length > 0" class="alert alert-danger" role="alert">
-                          <li v-for="msg in errors">{{ msg }}</li>
-                        </ul>
-                    </div>
                     <div class="col-lg-6">
+                        <h3>Matrix 1</h3>
                         <form v-on:submit.prevent="createMatrix($event, matrix1)">
-                            <h3>Matrix 1</h3>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                   <label for="matrix1Rows">Rows</label>
@@ -35,15 +30,18 @@
                                   <input class="form-control" v-model.number="matrix1.cols" id="matrix1Cols">
                                 </div>
                               </div>
-                            <div class="form-group text-center">
-                                <input type="submit" class="btn btn-secondary" value="Create Matrix">
-                                <button type="button" class="btn btn-outline-secondary" v-on:click="matrix1.isEditing = !matrix1.isEditing">{{ matrix1.isEditing ? 'Done Editing' : 'Edit Values' }}</button>
-                            </div>
+                              <div class="form-group text-center">
+                                  <input type="submit" class="btn btn-secondary" value="Create Matrix">
+                                  <button type="button" class="btn btn-outline-secondary" v-on:click="toggleEditing(matrix1)">{{ matrix1.isEditing ? 'Done Editing' : 'Edit Values' }}</button>
+                              </div>
+                              
+                        </form>
+                        <form v-on:submit.prevent="toggleEditing(matrix1)">
                             <div class="matrix-wrapper">
                                 <table v-if="matrix1.cells.length > 0" class="matrix">
-                                    <tr v-for="row in matrix1.cells">
-                                        <td v-if="matrix1.isEditing" v-for="(val, cIdx) in row"><input v-model.number="row[cIdx]" size="3" /></td>
-                                        <td v-if="!matrix1.isEditing" v-for="val in row">{{ val }}</td>
+                                    <tr v-for="(row, rIdx) in matrix1.cells">
+                                        <td v-if="matrix1.isEditing" v-for="(val, cIdx) in row"><input class="form-control" v-model.number="row[cIdx]" size="3" :class="{'is-invalid' : matrix1.cellErrors['r' + rIdx + 'c' + cIdx]}" @change="cellValueChange(matrix1, rIdx, cIdx)" /></td>
+                                        <td v-if="!matrix1.isEditing" v-for="val in row"><span>{{ val }}</span></td>
                                     </tr>
                                 </table>
                             </div>
@@ -64,13 +62,15 @@
                             </div>
                             <div class="form-group text-center">
                                 <input type="submit" class="btn btn-secondary" value="Create Matrix">
-                                <button type="button" class="btn btn-outline-secondary" v-on:click="matrix2.isEditing = !matrix2.isEditing">{{ matrix2.isEditing ? 'Done Editing' : 'Edit Values' }}</button>
+                                <button type="button" class="btn btn-outline-secondary" v-on:click="toggleEditing(matrix2)">{{ matrix2.isEditing ? 'Done Editing' : 'Edit Values' }}</button>
                             </div>
+                        </form>
+                        <form v-on:submit.prevent="toggleEditing(matrix2)">
                             <div class="matrix-wrapper">
                                 <table v-if="matrix2.cells.length > 0" class="matrix">
-                                    <tr v-for="row in matrix2.cells">
-                                        <td v-if="matrix2.isEditing" v-for="(val, cIdx) in row"><input v-model.number="row[cIdx]" size="3" /></td>
-                                        <td v-if="!matrix2.isEditing" v-for="val in row">{{ val }}</td>
+                                    <tr v-for="(row, rIdx) in matrix2.cells">
+                                        <td v-if="matrix2.isEditing" v-for="(val, cIdx) in row"><input class="form-control" v-model.number="row[cIdx]" size="3" :class="{'is-invalid' : matrix2.cellErrors['r' + rIdx + 'c' + cIdx]}" @change="cellValueChange(matrix2, rIdx, cIdx)" /></td>
+                                        <td v-if="!matrix2.isEditing" v-for="val in row"><span>{{ val }}</span></td>
                                     </tr>
                                 </table>
                             </div>
@@ -82,15 +82,20 @@
                         <span v-if="isMultiplying" class="spinner-border" role="status" aria-hidden="true"></span>
                         <span v-if="!isMultiplying">Multiply</span>
                     </button>
-                    <br><br>
+                    <br>
                 </div>
                 <div class="row" v-if="!isMultiplying">
+                    <div class="col-12">
+                        <ul v-if="errors && errors.length > 0" class="alert alert-danger" role="alert">
+                          <li v-for="msg in errors">{{ msg }}</li>
+                        </ul>
+                    </div>
                     <div class="col-lg-6" v-if="result">
                         <h3>Result</h3>
                         <div class="matrix-wrapper">
                             <table class="matrix">
                                 <tr v-for="row in result">
-                                    <td v-for="val in row">{{ val }}</td>
+                                    <td v-for="val in row"><span>{{ val }}</span></td>
                                 </tr>
                             </table>
                         </div>
@@ -100,7 +105,7 @@
                         <div class="matrix-wrapper">
                             <table class="matrix">
                                 <tr v-for="row in resultInChars">
-                                    <td v-for="val in row">{{ val }}</td>
+                                    <td v-for="val in row"><span>{{ val }}</span></td>
                                 </tr>
                             </table>
                         </div>
